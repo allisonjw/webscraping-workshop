@@ -1,39 +1,26 @@
-var Nightmare = require('nightmare'),
-  nightmare = Nightmare({
-    show: true
-  });
+var Nightmare = require('nightmare');
+var nightmare = Nightmare({ show: true });
 
-  // I visit www.panera.com
-// I click on the button #order-button
-// I wait until the form is present
-// I fill in my username in the field with selector '#username'
-// ...
+//go to www.seahawks.com
+//click on anchor for the link to information about the team
+//find player names by class querySelectAll
+//map over the player names and put into an array
 
 nightmare
-  //load a url
-  .goto('http://yahoo.com')
-  //simulate typing into an element identified by a CSS selector
-  //here, Nightmare is typing into the search bar
-  .type('input[title="Search"]', 'github nightmare')
-  //click an element identified by a CSS selector
-  //in this case, click the search button
-  .click('#uh-search-button')
-  //wait for an element identified by a CSS selector
-  //in this case, the body of the results
-  .wait('#main')
-  //execute javascript on the page
-  //here, the function is getting the HREF of the first search result
-  .evaluate(function() {
-    return document.querySelector('#main .searchCenterMiddle li a')
-      .href;
+  .goto('https://www.seahawks.com/')
+  .click('a[href="https://www.seahawks.com/team/players-roster/"]')
+  .wait(250)
+  .evaluate(() => {
+    var playerNames = document.querySelectorAll('.nfl-o-roster__player-name');
+    var name = [].slice.call(playerNames);
+    return name.map((node) => {
+      return node.innerText
+    });
   })
-  //end the Nightmare instance along with the Electron instance it wraps
   .end()
-  //run the queue of commands specified, followed by logging the HREF
-  .then(function(result) {
+  .then((result) => {
     console.log(result);
   })
-  //catch errors if they happen
-  .catch(function(error){
-    console.error('an error has occurred: ' + error);
+  .catch((error) => {
+    console.error('Search failed:', error);
   });
